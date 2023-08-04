@@ -5,12 +5,12 @@ class Author:
 
     def __init__(self, name):
         self.name = name
-        self.contracts = []
+        self.contracts_list = []
         self.books_list = []
         Author.all_authors.append(self)
     
-    def get_contracts(self):
-        return self.contracts
+    def contracts(self):
+        return self.contracts_list
 
     def books(self):
         return self.books_list
@@ -24,7 +24,7 @@ class Author:
             raise Exception("Invalid royalties percentage.  Royalties must be an integer between 0 and 100.")
         
         contract = Contract(self, book, date, royalties)
-        self.contracts.append(contract)  
+        self.contracts_list.append(contract)  
         self.books_list.append(book)
         book.authors_list.append(self)
         return contract
@@ -37,7 +37,8 @@ class Author:
             return False
 
     def total_royalties(self):
-        return sum(contract.royalties / 100 for contract in self.contracts) 
+        total_earnings = sum(contract.book.total_earnings() for contract in self.contracts)
+        return total_earnings * sum(contract.royalties / 100 for contract in self.contracts) 
 
 
 class Book:
@@ -55,6 +56,19 @@ class Book:
     def authors(self):
         return self.authors_list
 
+    def total_earnings(self):
+        return sum(contract.royalties for contract in self.contracts_list)
+
+    def total_earnings(self):
+        total_earnings = sum(contract.book.total_earnings() for contract in self.contracts_list)
+        return total_earnings * sum(contract.royalties / 100 for contract in self.contracts_list)
+        
+    def sign_contract(self, author, date, royalties):
+        contract = Contract(author, self, date, royalties)    
+        self.contracts_list.append(contract)
+        author.contracts_list.append(contract)
+        self.authors_list.append(author)
+        return contract
 
 class Contract:
     all_contracts = []
