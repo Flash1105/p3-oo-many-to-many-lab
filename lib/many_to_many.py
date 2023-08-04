@@ -78,3 +78,10 @@ class Contract:
     @classmethod
     def contracts_by_date(cls):
         return sorted(cls.all_contracts, key=lambda contract: contract.date)
+    
+    def is_valid_date_format(self,date):
+        try:
+            datetime.strptime(date, '%d/%m/%Y')
+            return True
+        except ValueError:
+            return False
