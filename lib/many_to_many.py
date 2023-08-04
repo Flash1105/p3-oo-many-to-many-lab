@@ -3,15 +3,15 @@ class Author:
 
     def __init__(self, name):
         self.name = name
-        self.contracts_list = []
-        self.book_list = []
+        self.contracts = []
+        self.book = []
         Author.all_authors.append(self)
     
     def contracts(self):
-        return self.contracts_list
+        return self.contracts
 
     def books(self):
-        return self.book_list
+        return self.book
     
     def sign_contract(self, book, date, royalties):
         if not isinstance(book, Book):
@@ -22,14 +22,16 @@ class Author:
             raise Exception("Invalid  ryalties percentage")
         
         contract = Contract(self, book, date, royalties)
-        self.contracts_list.append(contract)
-        self.book_list.append(book)
+        self.contracts.append(contract)
+        self.book.append(book)
         return contract
 class Book:
     all_books = []
 
     def __init__(self, title):
         self.title = title
+        self.contracts = []
+        self.authors = []
         Book.all_books.append(self)
 
 
