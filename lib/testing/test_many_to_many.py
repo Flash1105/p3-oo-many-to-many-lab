@@ -118,6 +118,8 @@ def test_author_has_total_royalties():
     Contract(author, book2, "01/01/2001", 20)
     Contract(author, book3, "01/01/2001", 30)
 
+    print(Contract.all_contracts)
+
     assert author.total_royalties() == 60
 
 def test_contract_sorts_contracts_by_date():

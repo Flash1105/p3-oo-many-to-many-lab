@@ -1,5 +1,6 @@
 from datetime import datetime
 
+
 class Author:
     all_authors = []
 
@@ -10,10 +11,10 @@ class Author:
         Author.all_authors.append(self)
     
     def contracts(self):
-        return self._contracts
+        return [contract for contract in Contract.all_contracts if contract.author == self]
 
-    def _get_books(self):
-        return self._books_list
+    def books(self):
+        return [contract.book for contract in Contract.all_contracts if contract.author == self]
 
     def sign_contract(self, book, date, royalties):
         contract = Contract(self, book, date, royalties)
@@ -22,9 +23,8 @@ class Author:
         return contract
 
     def total_royalties(self):
-        return sum(contract.royalties for contract in self._contracts)
+        return sum(contract.royalties for contract in self.contracts())
 
-    books = property(_get_books)
 
 class Book:
     all_books = []
@@ -36,12 +36,13 @@ class Book:
         Book.all_books.append(self)
     
     def contracts(self):
-        return self._contracts
+        return [contract for contract in Contract.all_contracts if contract.book == self]
 
-    def _get_authors(self):
-        return self._authors_list
+    def authors(self):
+        return [contract.author for contract in Contract.all_contracts if contract.book == self]
 
-    authors = property(_get_authors)
+    def total_royalties(self):
+        return sum(contract.royalties for contract in self.contracts())
 
 class Contract:
     all_contracts = []
