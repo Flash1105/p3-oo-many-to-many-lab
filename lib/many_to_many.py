@@ -21,7 +21,7 @@ class Author:
         if not isinstance(date, str) or not self.is_valid_date_format(date):
             raise Exception("Invalid date format. Date must be in the format 'dd/mm/yyyy'.")
         if not isinstance(royalties, int) or royalties < 0 or royalties > 100:
-            raise Exception("Invalid royalties percentage")
+            raise Exception("Invalid royalties percentage.  Royalties must be an integer between 0 and 100.")
         
         contract = Contract(self, book, date, royalties)
         self.contracts.append(contract)
