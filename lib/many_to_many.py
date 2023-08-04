@@ -1,3 +1,5 @@
+from datetime import datetime
+
 class Author:
     all_authors =[]
 
@@ -24,7 +26,17 @@ class Author:
         contract = Contract(self, book, date, royalties)
         self.contracts.append(contract)
         self.book.append(book)
+        book.authors_list.append(self)
         return contract
+    
+    @staticmethod
+    def is_valid_date_format(date):
+        try:
+            datetime.strptime(date, '%d/%m/%Y')
+            return True
+        except ValueError:
+            return False
+                              
 class Book:
     all_books = []
 
@@ -39,12 +51,22 @@ class Contract:
     all_contracts = []
 
     def __init__(self, author, book, date, royalties):
+        if not isinstance(author, Author):
+            raise Exception("Invalid author object.")
+        if not isinstance(book, Book):
+            raise Exception("Invalid book object.")
+        if not isinstance(date, str) or not Contract.is_valid_date_format(date):
+            raise Exception("Invalid date format. date must be in the format 'dd/mm/yyyy'")
         self.author = author
         self.book = book
         self.date = date
         self.royalties = royalties
         Contract.all_contracts.append(self)
 
-    @classmethod
-    def contracts_by_date(cls, date):
-        return [contract for contract in cls.all_contracts if contract.date == date]
+    @staticmethod
+    def is_valid_date_format(date):
+        try:
+            datetime.strptime(date, '%d/%m/%Y')
+            return True
+        except ValueError:
+            return False
