@@ -5,12 +5,12 @@ class Author:
 
     def __init__(self, name):
         self.name = name
-        self.contracts = []
+        self.contract_list = []
         self.books_list = []
         Author.all_authors.append(self)
     
     def contracts(self):
-        return self.contracts
+        return self.contract_list
 
     def books(self):
         return self.books_list
