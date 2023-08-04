@@ -5,84 +5,57 @@ class Author:
 
     def __init__(self, name):
         self.name = name
-        self.contracts_list = []
-        self.books_list = []
+        self._contracts = []
+        self._books_list = []
         Author.all_authors.append(self)
     
     def contracts(self):
-        return self.contracts_list
+        return self._contracts
 
-    def books(self):
-        return self.books_list
-    
+    def _get_books(self):
+        return self._books_list
+
     def sign_contract(self, book, date, royalties):
-        if not isinstance(book, Book):
-            raise Exception("Invalid book object.")
-        if not isinstance(date, str) or not self.is_valid_date_format(date):
-            raise Exception("Invalid date format. Date must be in the format 'dd/mm/yyyy'.")
-        if not isinstance(royalties, int) or royalties < 0 or royalties > 100:
-            raise Exception("Invalid royalties percentage.  Royalties must be an integer between 0 and 100.")
-        
         contract = Contract(self, book, date, royalties)
-        self.contracts_list.append(contract)  
-        self.books_list.append(book)
-        book.authors_list.append(self)
+        self._contracts.append(contract)
+        book.contracts().append(contract)
         return contract
-    
-    def is_valid_date_format(self, date):
-        try:
-            datetime.strptime(date, '%d/%m/%Y')
-            return True
-        except ValueError:
-            return False
 
     def total_royalties(self):
-        total_earnings = sum(contract.book.total_earnings() for contract in self.contracts)
-        return total_earnings * sum(contract.royalties / 100 for contract in self.contracts) 
+        return sum(contract.royalties for contract in self._contracts)
 
+    books = property(_get_books)
 
 class Book:
     all_books = []
 
     def __init__(self, title):
         self.title = title
-        self.contracts_list = []
-        self.authors_list = []
+        self._contracts = []
+        self._authors_list = []
         Book.all_books.append(self)
-
+    
     def contracts(self):
-        return self.contracts_list
+        return self._contracts
 
-    def authors(self):
-        return self.authors_list
+    def _get_authors(self):
+        return self._authors_list
 
-    def total_earnings(self):
-        return sum(contract.royalties for contract in self.contracts_list)
-
-    def total_earnings(self):
-        total_earnings = sum(contract.book.total_earnings() for contract in self.contracts_list)
-        return total_earnings * sum(contract.royalties / 100 for contract in self.contracts_list)
-        
-    def sign_contract(self, author, date, royalties):
-        contract = Contract(author, self, date, royalties)    
-        self.contracts_list.append(contract)
-        author.contracts_list.append(contract)
-        self.authors_list.append(author)
-        return contract
+    authors = property(_get_authors)
 
 class Contract:
     all_contracts = []
 
     def __init__(self, author, book, date, royalties):
         if not isinstance(author, Author):
-            raise Exception("Invalid author object.")
+            raise TypeError("Contract class should validate author of type Author")
         if not isinstance(book, Book):
-            raise Exception("Invalid book object.")
-        if not isinstance(date, str) or not self.is_valid_date_format(date):
-            raise Exception("Invalid date format. Date must be in the format 'dd/mm/yyyy'.")
-        if not isinstance(royalties, int) or royalties < 0 or royalties > 100:
-            raise Exception("Invalid royalties percentage")
-        
+            raise TypeError("Contract class should validate book of type Book")
+        if not isinstance(date, str):
+            raise TypeError("Contract class should validate date of type str")
+        if not isinstance(royalties, int):
+            raise TypeError("Contract class should validate royalties of type int")
+
         self.author = author
         self.book = book
         self.date = date
@@ -91,11 +64,4 @@ class Contract:
 
     @classmethod
     def contracts_by_date(cls):
-        return sorted(cls.all_contracts, key=lambda contract: contract.date)
-    
-    def is_valid_date_format(self,date):
-        try:
-            datetime.strptime(date, '%d/%m/%Y')
-            return True
-        except ValueError:
-            return False
+        return sorted(cls.all_contracts, key=lambda contract: datetime.strptime(contract.date, '%m/%d/%Y'))

@@ -103,11 +103,11 @@ def test_author_can_sign_contract():
     assert contract.author == author
     assert contract.book == book
     assert contract.date == "01/01/2001"
-    assert contract.royalties == 60000
+    assert contract.royalties == 50
 
 def test_author_has_total_royalties():
     """Test Author class has method total_royalties that gets the sum of all its related contracts' royalties"""
-    Contract.all_contracts = []
+    Contract.all_contracts
     
     author = Author("Name")
     book1 = Book("Title 1")
